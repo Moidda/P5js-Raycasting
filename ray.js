@@ -9,12 +9,18 @@ class Ray {
         angleMode(DEGREES);
         this.endX = this.startX + this.len*cos(this.theta);
         this.endY = this.startY - this.len*sin(this.theta);
+    
+        this.rayColor = color(255, 255, 0);
+    }
+
+    setColor(rayColor) {
+        this.rayColor = rayColor;
     }
 
     show() {
         if(!this.isActive) return;
         strokeWeight(1);
-        stroke(255, 255, 0);
+        stroke(this.rayColor);
         line(this.startX, this.startY, this.endX, this.endY);
     }
 

@@ -1,74 +1,56 @@
-
-var centerX, centerY;
-var opac;
-var radius; 
-var rays;
-var linesX, linesY;
+var lines;
+var light;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
+    light = new Light(width/2, height/2);
+    lines = new Lines();
+}
 
-    opac = 255;
-    centerX = width/2;
-    centerY = height/2;
-    radius = 10;
-
-    rays = new Array();
-    for(var i = 0; i < 360; i+=0.25) 
-        rays.push(new Ray(centerX, centerY, i));
-
-    linesX = new Array();
-    linesY = new Array();
+function changeLightColor() {
+    if(keyCode == UP_ARROW) {
+        let r = Math.floor(random(0, 255));
+        let g = Math.floor(random(0, 255));
+        let b = Math.floor(random(0, 255));
+        light.setColor(r, g, b);
+    }
 }
 
 function draw() {
     background(0);
 
-    circleColor = color(255, 255, 0);
-    fill(circleColor);
-    circle(mouseX, mouseY, radius);
+    light.updatePos(mouseX, mouseY);
+    light.show(lines);
 
-    for(let i = 0; i < rays.length; i++) {
-        rays[i].updatePos(mouseX, mouseY);
-        for(let j = 0; j+1 < linesX.length; j++) {
-            if(linesX[j+1] == -1) continue;
-            if(linesX[j] == -1) continue;    
-            let x1 = linesX[j];
-            let y1 = linesY[j];
-            let x2 = linesX[j+1];
-            let y2 = linesY[j+1];
-            rays[i].collides(x1, y1, x2, y2);
-        }
-        rays[i].show();
-    }
-
-    for(let i = 0; i+1 < linesX.length; i++) {
-        if(linesX[i+1] == -1) continue;
-        if(linesX[i] == -1) continue;
-        stroke(255);
-        strokeWeight(10);
-        line(linesX[i], linesY[i], linesX[i+1], linesY[i+1]);
-    }
+    lines.show();
 }
+
 
 function mousePressed() {
-    for(let i = 0; i < rays.length; i++)
-        rays[i].setIsActive(false);
+    light.setIsActive(false);
 }
 
-function mouseReleased() {
-    for(let i = 0; i < rays.length; i++)
-        rays[i].setIsActive(true);
 
-    linesX.push(-1);
-    linesY.push(-1);
+function mouseReleased() {
+    light.setIsActive(true);
+    lines.add(-1, -1);
 }
 
 
 function mouseDragged() {
-    if(mouseButton == LEFT && (mouseX != pmouseX || mouseY != pmouseY)) {
-        linesX.push(mouseX);
-        linesY.push(mouseY);
+    if(mouseX != pmouseX || mouseY != pmouseY) {
+        lines.add(mouseX, mouseY);
+    }
+    return false;
+}
+
+
+function keyPressed() {
+    if(keyCode == UP_ARROW) {
+        let r = Math.floor(random(0, 255));
+        let g = Math.floor(random(0, 255));
+        let b = Math.floor(random(0, 255));
+        light.setColor(r, g, b);
     }
     return false;
 }
